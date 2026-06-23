@@ -103,6 +103,11 @@ async function initializeDatabase(pool, options = {}) {
       ON reservations(gift_id, status);
   `);
 
+  await pool.query(`
+    ALTER TABLE gifts
+    ALTER COLUMN desired_quantity DROP NOT NULL
+  `);
+
   if (options.enableRls !== false) {
     await pool.query(`
       ALTER TABLE settings ENABLE ROW LEVEL SECURITY;

@@ -100,20 +100,21 @@ function createGiftCard(gift, index) {
     body.append(attribution);
   }
 
-  const progressText = createElement("div", "gift-card__progress-text");
-  progressText.append(
-    createElement("span", "", `${gift.reservedQuantity} de ${gift.desiredQuantity} reservado${gift.desiredQuantity === 1 ? "" : "s"}`),
-    createElement("span", "", soldOut ? "Completo" : `${gift.availableQuantity} livre${gift.availableQuantity === 1 ? "" : "s"}`)
+  const progressText = createElement(
+    "div",
+    `gift-card__progress-text${gift.unlimited ? " gift-card__progress-text--unlimited" : ""}`
   );
-  const progress = createElement("div", "progress");
-  progress.setAttribute("role", "progressbar");
-  progress.setAttribute("aria-label", `Quantidade reservada de ${gift.name}`);
-  progress.setAttribute("aria-valuemin", "0");
-  progress.setAttribute("aria-valuemax", String(gift.desiredQuantity));
-  progress.setAttribute("aria-valuenow", String(gift.reservedQuantity));
-  const bar = createElement("div", "progress__bar");
-  bar.style.width = `${Math.min(100, (gift.reservedQuantity / gift.desiredQuantity) * 100)}%`;
-  progress.append(bar);
+  if (gift.unlimited) {
+    progressText.append(
+      createElement("span", "", `${gift.reservedQuantity} reservado${gift.reservedQuantity === 1 ? "" : "s"}`),
+      createElement("span", "", "Sem limite")
+    );
+  } else {
+    progressText.append(
+      createElement("span", "", `${gift.reservedQuantity} de ${gift.desiredQuantity} reservado${gift.desiredQuantity === 1 ? "" : "s"}`),
+      createElement("span", "", soldOut ? "Completo" : `${gift.availableQuantity} livre${gift.availableQuantity === 1 ? "" : "s"}`)
+    );
+  }
 
   const button = createElement(
     "button",
@@ -124,7 +125,20 @@ function createGiftCard(gift, index) {
   button.disabled = soldOut;
   if (!soldOut) button.addEventListener("click", () => openReservation(gift));
 
-  body.append(progressText, progress, button);
+  body.append(progressText);
+  if (!gift.unlimited) {
+    const progress = createElement("div", "progress");
+    progress.setAttribute("role", "progressbar");
+    progress.setAttribute("aria-label", `Quantidade reservada de ${gift.name}`);
+    progress.setAttribute("aria-valuemin", "0");
+    progress.setAttribute("aria-valuemax", String(gift.desiredQuantity));
+    progress.setAttribute("aria-valuenow", String(gift.reservedQuantity));
+    const bar = createElement("div", "progress__bar");
+    bar.style.width = `${Math.min(100, (gift.reservedQuantity / gift.desiredQuantity) * 100)}%`;
+    progress.append(bar);
+    body.append(progress);
+  }
+  body.append(button);
   card.append(imageWrap, body);
   return card;
 }
@@ -144,18 +158,23 @@ function openReservation(gift) {
   elements.form.reset();
   elements.giftId.value = gift.id;
   elements.giftName.textContent = gift.name;
-  elements.quantity.max = gift.availableQuantity;
+  if (gift.unlimited) elements.quantity.removeAttribute("max");
+  else elements.quantity.max = gift.availableQuantity;
   elements.quantity.value = 1;
-  elements.quantityHelp.textContent = gift.availableQuantity === 1
-    ? "1 unidade disponível."
-    : `${gift.availableQuantity} unidades disponíveis.`;
+  elements.quantityHelp.textContent = gift.unlimited
+    ? "Você pode escolher qualquer quantidade."
+    : gift.availableQuantity === 1
+      ? "1 unidade disponível."
+      : `${gift.availableQuantity} unidades disponíveis.`;
   elements.error.classList.add("hidden");
   elements.dialog.showModal();
   window.setTimeout(() => document.querySelector("#guest-name").focus(), 50);
 }
 
 function adjustQuantity(change) {
-  const max = Number(elements.quantity.max) || 1;
+  const max = state.selectedGift?.unlimited
+    ? Number.MAX_SAFE_INTEGER
+    : Number(elements.quantity.max) || 1;
   const current = Number(elements.quantity.value) || 1;
   elements.quantity.value = Math.min(max, Math.max(1, current + change));
 }

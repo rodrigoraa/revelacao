@@ -109,6 +109,75 @@ test("fluxo público e Espaço da mãe preserva privacidade e impede excesso de 
   assert.equal(createdGift.data.gift.imageAttribution, "Autora Exemplo · CC BY 4.0");
   assert.equal(createdGift.data.gift.imageSourceUrl, "https://commons.wikimedia.org/wiki/File:Example.jpg");
 
+  const unlimitedGift = await request(baseUrl, "/api/espaco-da-mae/gifts", {
+    method: "POST",
+    headers: { Cookie: cookie },
+    body: JSON.stringify({
+      name: "Fraldas sem limite",
+      description: "",
+      category: "Higiene",
+      imageUrl: "",
+      unlimited: true,
+    }),
+  });
+  assert.equal(unlimitedGift.response.status, 201);
+  assert.equal(unlimitedGift.data.gift.unlimited, true);
+  assert.equal(unlimitedGift.data.gift.desiredQuantity, null);
+  assert.equal(unlimitedGift.data.gift.availableQuantity, null);
+
+  const unlimitedReservation = await request(baseUrl, "/api/reservations", {
+    method: "POST",
+    body: JSON.stringify({
+      giftId: unlimitedGift.data.gift.id,
+      guestName: "Convidado sem limite",
+      phone: "",
+      quantity: 25,
+    }),
+  });
+  assert.equal(unlimitedReservation.response.status, 201);
+  assert.equal(unlimitedReservation.data.gift.unlimited, true);
+  assert.equal(unlimitedReservation.data.gift.reservedQuantity, 25);
+  assert.equal(unlimitedReservation.data.gift.availableQuantity, null);
+  assert.equal(unlimitedReservation.data.gift.status, "available");
+
+  const tooSmallLimit = await request(
+    baseUrl,
+    `/api/espaco-da-mae/gifts/${unlimitedGift.data.gift.id}`,
+    {
+      method: "PUT",
+      headers: { Cookie: cookie },
+      body: JSON.stringify({
+        name: "Fraldas sem limite",
+        description: "",
+        category: "Higiene",
+        imageUrl: "",
+        unlimited: false,
+        desiredQuantity: 20,
+      }),
+    }
+  );
+  assert.equal(tooSmallLimit.response.status, 409);
+
+  const convertedToLimited = await request(
+    baseUrl,
+    `/api/espaco-da-mae/gifts/${unlimitedGift.data.gift.id}`,
+    {
+      method: "PUT",
+      headers: { Cookie: cookie },
+      body: JSON.stringify({
+        name: "Fraldas com limite",
+        description: "",
+        category: "Higiene",
+        imageUrl: "",
+        unlimited: false,
+        desiredQuantity: 30,
+      }),
+    }
+  );
+  assert.equal(convertedToLimited.response.status, 200);
+  assert.equal(convertedToLimited.data.gift.unlimited, false);
+  assert.equal(convertedToLimited.data.gift.availableQuantity, 5);
+
   const cancelled = await request(
     baseUrl,
     `/api/espaco-da-mae/reservations/${motherSpaceGift.reservations[0].id}`,

@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS gifts (
   image_url TEXT,
   image_attribution TEXT,
   image_source_url TEXT,
-  desired_quantity INTEGER NOT NULL CHECK (desired_quantity > 0),
+  desired_quantity INTEGER CHECK (desired_quantity > 0),
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

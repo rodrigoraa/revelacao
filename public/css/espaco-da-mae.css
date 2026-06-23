@@ -372,6 +372,40 @@
   display: grid;
 }
 
+.limit-toggle {
+  display: flex !important;
+  align-items: center;
+  gap: 9px;
+  width: fit-content;
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.limit-toggle input {
+  width: 19px;
+  min-height: 19px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--rose-600);
+}
+
+.limit-toggle span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.field input:disabled {
+  color: var(--muted);
+  background: #f3efee;
+  cursor: not-allowed;
+}
+
+.mother-space-gift__unlimited {
+  color: #47745d;
+  font-weight: 750;
+}
+
 .image-suggestions {
   padding: 14px;
   margin: -4px 0 18px;

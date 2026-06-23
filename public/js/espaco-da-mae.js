@@ -19,6 +19,8 @@ const elements = {
   giftError: document.querySelector("#gift-error"),
   giftSubmit: document.querySelector("#gift-submit"),
   giftName: document.querySelector("#gift-name"),
+  giftQuantity: document.querySelector("#gift-quantity"),
+  giftUnlimited: document.querySelector("#gift-unlimited"),
   giftImage: document.querySelector("#gift-image"),
   imageAttribution: document.querySelector("#gift-image-attribution"),
   imageSource: document.querySelector("#gift-image-source"),
@@ -80,10 +82,18 @@ function formatDate(date) {
 function renderSummary() {
   const gifts = state.dashboard.gifts;
   const reserved = gifts.reduce((total, gift) => total + gift.reservedQuantity, 0);
-  const available = gifts.reduce((total, gift) => total + gift.availableQuantity, 0);
+  const available = gifts.reduce(
+    (total, gift) => total + (Number.isInteger(gift.availableQuantity) ? gift.availableQuantity : 0),
+    0
+  );
+  const hasUnlimited = gifts.some((gift) => gift.unlimited);
+  const availableElement = document.querySelector("#summary-available");
   document.querySelector("#summary-gifts").textContent = gifts.length;
   document.querySelector("#summary-reserved").textContent = reserved;
-  document.querySelector("#summary-available").textContent = available;
+  availableElement.textContent = hasUnlimited ? "∞" : available;
+  availableElement.title = hasUnlimited
+    ? `${available} unidades disponíveis nos presentes que possuem limite`
+    : "";
 }
 
 function renderSettings() {
@@ -124,16 +134,23 @@ function giftElement(gift) {
   image.addEventListener("error", () => { image.src = "/images/presente.svg"; }, { once: true });
 
   const content = createElement("div", "mother-space-gift__content");
+  const reservationSummary = gift.unlimited
+    ? `${gift.reservedQuantity} reservado${gift.reservedQuantity === 1 ? "" : "s"} · sem limite`
+    : `${gift.reservedQuantity} de ${gift.desiredQuantity} reservados`;
   content.append(
     createElement("h3", "", gift.name),
-    createElement("p", "mother-space-gift__meta", `${gift.category || "Sem categoria"} · ${gift.reservedQuantity} de ${gift.desiredQuantity} reservados`)
+    createElement("p", "mother-space-gift__meta", `${gift.category || "Sem categoria"} · ${reservationSummary}`)
   );
   const progressWrap = createElement("div", "mother-space-gift__progress");
-  const progress = createElement("div", "progress");
-  const bar = createElement("div", "progress__bar");
-  bar.style.width = `${Math.min(100, (gift.reservedQuantity / gift.desiredQuantity) * 100)}%`;
-  progress.append(bar);
-  progressWrap.append(progress, createElement("span", "", `${gift.availableQuantity} livres`));
+  if (gift.unlimited) {
+    progressWrap.append(createElement("span", "mother-space-gift__unlimited", "Disponibilidade ilimitada"));
+  } else {
+    const progress = createElement("div", "progress");
+    const bar = createElement("div", "progress__bar");
+    bar.style.width = `${Math.min(100, (gift.reservedQuantity / gift.desiredQuantity) * 100)}%`;
+    progress.append(bar);
+    progressWrap.append(progress, createElement("span", "", `${gift.availableQuantity} livres`));
+  }
   content.append(progressWrap);
 
   const actions = createElement("div", "mother-space-gift__actions");
@@ -214,7 +231,9 @@ function openGiftDialog(gift = null) {
   document.querySelector("#gift-dialog-title").textContent = gift ? "Editar presente" : "Adicionar presente";
   elements.giftName.value = gift?.name || "";
   document.querySelector("#gift-category").value = gift?.category || "";
-  document.querySelector("#gift-quantity").value = gift?.desiredQuantity || 1;
+  elements.giftQuantity.value = gift?.desiredQuantity || 1;
+  elements.giftUnlimited.checked = Boolean(gift?.unlimited);
+  syncQuantityLimit();
   document.querySelector("#gift-description").value = gift?.description || "";
   elements.giftImage.value = gift?.imageUrl || "";
   elements.imageAttribution.value = gift?.imageAttribution || "";
@@ -224,6 +243,12 @@ function openGiftDialog(gift = null) {
   elements.imageSuggestionsGrid.classList.add("hidden");
   elements.dialog.showModal();
   window.setTimeout(() => elements.giftName.focus(), 50);
+}
+
+function syncQuantityLimit() {
+  const unlimited = elements.giftUnlimited.checked;
+  elements.giftQuantity.disabled = unlimited;
+  elements.giftQuantity.required = !unlimited;
 }
 
 function selectSuggestedImage(image, button) {
@@ -360,7 +385,9 @@ elements.giftForm.addEventListener("submit", async (event) => {
   elements.giftSubmit.textContent = "Salvando...";
 
   const payload = Object.fromEntries(new FormData(elements.giftForm));
-  payload.desiredQuantity = Number(payload.desiredQuantity);
+  payload.unlimited = elements.giftUnlimited.checked;
+  if (payload.unlimited) delete payload.desiredQuantity;
+  else payload.desiredQuantity = Number(payload.desiredQuantity);
   const giftId = document.querySelector("#edit-gift-id").value;
 
   try {
@@ -393,6 +420,7 @@ elements.giftName.addEventListener("input", () => {
   window.clearTimeout(state.imageSearchTimer);
   state.imageSearchTimer = window.setTimeout(searchGiftImages, 650);
 });
+elements.giftUnlimited.addEventListener("change", syncQuantityLimit);
 elements.imageSearchButton.addEventListener("click", searchGiftImages);
 elements.giftImage.addEventListener("input", () => {
   elements.imageAttribution.value = "";

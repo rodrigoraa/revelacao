@@ -214,6 +214,7 @@ function plainMetadata(value) {
 }
 
 function giftStatus(desired, reserved) {
+  if (desired === null) return "available";
   if (reserved >= desired) return "sold_out";
   if (reserved > 0) return "partial";
   return "available";
@@ -221,7 +222,8 @@ function giftStatus(desired, reserved) {
 
 function mapGift(row) {
   const reserved = Number(row.reserved_quantity || 0);
-  const desired = Number(row.desired_quantity);
+  const unlimited = row.desired_quantity === null;
+  const desired = unlimited ? null : Number(row.desired_quantity);
   return {
     id: row.id,
     name: row.name,
@@ -231,8 +233,9 @@ function mapGift(row) {
     imageAttribution: row.image_attribution,
     imageSourceUrl: row.image_source_url,
     desiredQuantity: desired,
+    unlimited,
     reservedQuantity: reserved,
-    availableQuantity: Math.max(0, desired - reserved),
+    availableQuantity: unlimited ? null : Math.max(0, desired - reserved),
     status: giftStatus(desired, reserved),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -354,17 +357,19 @@ async function createApp(options = {}) {
         FROM reservations
         WHERE gift_id = $1 AND status = 'active'
       `, [giftId]);
-      const available = Number(gift.desired_quantity) - reservedResult.rows[0].total;
+      if (gift.desired_quantity !== null) {
+        const available = Number(gift.desired_quantity) - reservedResult.rows[0].total;
 
-      if (available <= 0) {
-        throw new ApiError(409, "Este presente acabou de ser totalmente reservado.", { available: 0 });
-      }
-      if (quantity > available) {
-        throw new ApiError(
-          409,
-          `Há somente ${available} ${available === 1 ? "unidade disponível" : "unidades disponíveis"}.`,
-          { available }
-        );
+        if (available <= 0) {
+          throw new ApiError(409, "Este presente acabou de ser totalmente reservado.", { available: 0 });
+        }
+        if (quantity > available) {
+          throw new ApiError(
+            409,
+            `Há somente ${available} ${available === 1 ? "unidade disponível" : "unidades disponíveis"}.`,
+            { available }
+          );
+        }
       }
 
       const result = await client.query(`
@@ -568,7 +573,10 @@ async function createApp(options = {}) {
     const category = text(req.body.category, "categoria", { max: 80 });
     const imageUrl = giftImageUrl(req.body.imageUrl);
     const metadata = imageMetadata(req.body, imageUrl);
-    const desiredQuantity = positiveInteger(req.body.desiredQuantity, "Quantidade desejada");
+    const unlimited = req.body.unlimited === true || req.body.unlimited === "true" || req.body.unlimited === "on";
+    const desiredQuantity = unlimited
+      ? null
+      : positiveInteger(req.body.desiredQuantity, "Quantidade desejada");
 
     const result = await db.query(`
       INSERT INTO gifts (
@@ -598,9 +606,12 @@ async function createApp(options = {}) {
     const category = text(req.body.category, "categoria", { max: 80 });
     const imageUrl = giftImageUrl(req.body.imageUrl);
     const metadata = imageMetadata(req.body, imageUrl);
-    const desiredQuantity = positiveInteger(req.body.desiredQuantity, "Quantidade desejada");
+    const unlimited = req.body.unlimited === true || req.body.unlimited === "true" || req.body.unlimited === "on";
+    const desiredQuantity = unlimited
+      ? null
+      : positiveInteger(req.body.desiredQuantity, "Quantidade desejada");
 
-    if (desiredQuantity < existing.reservedQuantity) {
+    if (!unlimited && desiredQuantity < existing.reservedQuantity) {
       throw new ApiError(
         409,
         `A quantidade não pode ser menor que as ${existing.reservedQuantity} unidades já reservadas.`

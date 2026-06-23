@@ -448,6 +448,10 @@ h2 {
   font-weight: 650;
 }
 
+.gift-card__progress-text--unlimited {
+  margin-bottom: 18px;
+}
+
 .progress {
   height: 7px;
   overflow: hidden;
@@ -851,6 +855,10 @@ h2 {
     margin-top: auto;
     margin-bottom: 5px;
     font-size: 0.68rem;
+  }
+
+  .gift-card__progress-text--unlimited {
+    margin-bottom: 10px;
   }
 
   .progress {
