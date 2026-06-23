@@ -67,7 +67,13 @@ function showMotherSpace() {
 
 function formatDate(date) {
   if (!date) return "";
-  const parsed = new Date(`${date.replace(" ", "T")}Z`);
+  const normalized = typeof date === "string" ? date.replace(" ", "T") : date;
+  const hasTimezone = typeof normalized === "string"
+    && /(?:Z|[+-]\d{2}:?\d{2})$/i.test(normalized);
+  const parsed = new Date(
+    typeof normalized === "string" && !hasTimezone ? `${normalized}Z` : normalized
+  );
+  if (Number.isNaN(parsed.getTime())) return "data indisponível";
   return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(parsed);
 }
 
@@ -109,6 +115,7 @@ function reservationElement(reservation) {
 }
 
 function giftElement(gift) {
+  const reservations = Array.isArray(gift.reservations) ? gift.reservations : [];
   const card = createElement("article", "mother-space-gift");
   const main = createElement("div", "mother-space-gift__main");
   const image = createElement("img", "mother-space-gift__image");
@@ -139,7 +146,7 @@ function giftElement(gift) {
   actions.append(edit, remove);
   main.append(image, content, actions);
 
-  const activeCount = gift.reservations.filter((item) => item.status === "active").length;
+  const activeCount = reservations.filter((item) => item.status === "active").length;
   const toggle = createElement(
     "button",
     "reservation-toggle",
@@ -151,8 +158,8 @@ function giftElement(gift) {
   toggle.setAttribute("aria-expanded", "false");
   const reservationList = createElement("div", "reservation-list hidden");
 
-  if (gift.reservations.length) {
-    reservationList.append(...gift.reservations.map(reservationElement));
+  if (reservations.length) {
+    reservationList.append(...reservations.map(reservationElement));
   } else {
     reservationList.append(createElement("p", "reservation-empty", "Este presente ainda não recebeu reservas."));
   }
