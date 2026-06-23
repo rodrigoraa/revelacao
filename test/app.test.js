@@ -38,6 +38,7 @@ test("fluxo público e Espaço da mãe preserva privacidade e impede excesso de 
 
   const motherSpacePage = await fetch(`${baseUrl}/espaco-da-mae`);
   assert.equal(motherSpacePage.status, 200);
+  assert.equal(motherSpacePage.headers.get("cache-control"), "no-store");
   assert.match(await motherSpacePage.text(), /Espaço da mãe/);
 
   const publicList = await request(baseUrl, "/api/gifts");
@@ -68,6 +69,12 @@ test("fluxo público e Espaço da mãe preserva privacidade e impede excesso de 
   const updatedGift = updatedList.data.gifts.find((gift) => gift.id === oneUnitGift.id);
   assert.equal(updatedGift.status, "sold_out");
   assert.equal(updatedGift.availableQuantity, 0);
+
+  const malformedCookieSession = await request(baseUrl, "/api/espaco-da-mae/session", {
+    headers: { Cookie: "cha_lista_espaco_mae=%E0%A4%A" },
+  });
+  assert.equal(malformedCookieSession.response.status, 200);
+  assert.equal(malformedCookieSession.data.authenticated, false);
 
   const login = await request(baseUrl, "/api/espaco-da-mae/login", {
     method: "POST",
@@ -109,6 +116,20 @@ test("fluxo público e Espaço da mãe preserva privacidade e impede excesso de 
   assert.equal(createdGift.data.gift.imageAttribution, "Autora Exemplo · CC BY 4.0");
   assert.equal(createdGift.data.gift.imageSourceUrl, "https://commons.wikimedia.org/wiki/File:Example.jpg");
 
+  const oversizedGift = await request(baseUrl, "/api/espaco-da-mae/gifts", {
+    method: "POST",
+    headers: { Cookie: cookie },
+    body: JSON.stringify({
+      name: "Presente gigante",
+      description: "",
+      category: "",
+      imageUrl: "",
+      desiredQuantity: 10000,
+    }),
+  });
+  assert.equal(oversizedGift.response.status, 400);
+  assert.match(oversizedGift.data.error, /Quantidade desejada deve ser no máximo 9999/);
+
   const unlimitedGift = await request(baseUrl, "/api/espaco-da-mae/gifts", {
     method: "POST",
     headers: { Cookie: cookie },
@@ -139,6 +160,18 @@ test("fluxo público e Espaço da mãe preserva privacidade e impede excesso de 
   assert.equal(unlimitedReservation.data.gift.reservedQuantity, 25);
   assert.equal(unlimitedReservation.data.gift.availableQuantity, null);
   assert.equal(unlimitedReservation.data.gift.status, "available");
+
+  const oversizedReservation = await request(baseUrl, "/api/reservations", {
+    method: "POST",
+    body: JSON.stringify({
+      giftId: unlimitedGift.data.gift.id,
+      guestName: "Convidado exagerado",
+      phone: "",
+      quantity: 10000,
+    }),
+  });
+  assert.equal(oversizedReservation.response.status, 400);
+  assert.match(oversizedReservation.data.error, /Quantidade deve ser no máximo 9999/);
 
   const tooSmallLimit = await request(
     baseUrl,
@@ -184,6 +217,15 @@ test("fluxo público e Espaço da mãe preserva privacidade e impede excesso de 
     { method: "DELETE", headers: { Cookie: cookie } }
   );
   assert.equal(cancelled.response.status, 200);
+
+  const dashboardAfterCancel = await request(baseUrl, "/api/espaco-da-mae/dashboard", {
+    headers: { Cookie: cookie },
+  });
+  const cancelledReservation = dashboardAfterCancel.data.gifts
+    .flatMap((gift) => gift.reservations)
+    .find((reservation) => reservation.id === motherSpaceGift.reservations[0].id);
+  assert.equal(cancelledReservation.status, "cancelled");
+  assert.ok(cancelledReservation.cancelledAt);
 
   const availableAgain = await request(baseUrl, "/api/gifts");
   const releasedGift = availableAgain.data.gifts.find((gift) => gift.id === oneUnitGift.id);

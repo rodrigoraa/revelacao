@@ -13,6 +13,8 @@ class ApiError extends Error {
   }
 }
 
+const MAX_QUANTITY = 9999;
+
 function text(value, field, { required = false, max = 500 } = {}) {
   const result = typeof value === "string" ? value.trim() : "";
   if (required && !result) throw new ApiError(400, `Preencha o campo ${field}.`);
@@ -20,10 +22,13 @@ function text(value, field, { required = false, max = 500 } = {}) {
   return result || null;
 }
 
-function positiveInteger(value, field) {
+function positiveInteger(value, field, { max = MAX_QUANTITY } = {}) {
   const number = Number(value);
   if (!Number.isInteger(number) || number < 1) {
     throw new ApiError(400, `${field} deve ser um número inteiro maior que zero.`);
+  }
+  if (number > max) {
+    throw new ApiError(400, `${field} deve ser no máximo ${max}.`);
   }
   return number;
 }
@@ -659,13 +664,21 @@ async function createApp(options = {}) {
   });
 
   const publicDirectory = path.join(__dirname, "..", "public");
+  const sendHtml = (fileName) => (req, res) => {
+    res.setHeader("Cache-Control", "no-store");
+    res.sendFile(path.join(publicDirectory, fileName));
+  };
+  app.get("/", sendHtml("index.html"));
+  app.get("/espaco-da-mae", sendHtml("espaco-da-mae.html"));
   app.use(express.static(publicDirectory, {
     extensions: ["html"],
     maxAge: isProduction ? "1h" : 0,
+    setHeaders(res, filePath) {
+      if (path.extname(filePath) === ".html") {
+        res.setHeader("Cache-Control", "no-store");
+      }
+    },
   }));
-  app.get("/espaco-da-mae", (req, res) => {
-    res.sendFile(path.join(publicDirectory, "espaco-da-mae.html"));
-  });
 
   app.use("/api", (req, res) => {
     res.status(404).json({ error: "Rota não encontrada." });

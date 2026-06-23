@@ -4,6 +4,8 @@ const state = {
   selectedGift: null,
 };
 
+const MAX_RESERVATION_QUANTITY = 9999;
+
 const elements = {
   eventTitle: document.querySelector("#event-title"),
   familyName: document.querySelector("#family-name"),
@@ -24,8 +26,8 @@ const elements = {
 
 async function api(url, options = {}) {
   const response = await fetch(url, {
-    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
     ...options,
+    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
@@ -158,11 +160,10 @@ function openReservation(gift) {
   elements.form.reset();
   elements.giftId.value = gift.id;
   elements.giftName.textContent = gift.name;
-  if (gift.unlimited) elements.quantity.removeAttribute("max");
-  else elements.quantity.max = gift.availableQuantity;
+  elements.quantity.max = gift.unlimited ? MAX_RESERVATION_QUANTITY : gift.availableQuantity;
   elements.quantity.value = 1;
   elements.quantityHelp.textContent = gift.unlimited
-    ? "Você pode escolher qualquer quantidade."
+    ? `Sem limite total para este presente. Escolha até ${MAX_RESERVATION_QUANTITY} unidades por vez.`
     : gift.availableQuantity === 1
       ? "1 unidade disponível."
       : `${gift.availableQuantity} unidades disponíveis.`;

@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="/css/styles.css?v=20260623-3">
     <link rel="stylesheet" href="/css/espaco-da-mae.css?v=20260623-3">
-    <script src="/js/espaco-da-mae.js?v=20260623-3" defer></script>
+    <script src="/js/espaco-da-mae.js?v=20260623-4" defer></script>
   </head>
   <body class="mother-space-body">
     <a class="skip-link" href="#mother-space-content">Ir para o conteúdo</a>
@@ -63,7 +63,7 @@
           </article>
           <article class="summary-card">
             <span class="summary-card__icon summary-card__icon--green" aria-hidden="true">✓</span>
-            <div><strong id="summary-reserved">0</strong><span>Presentes escolhidos</span></div>
+            <div><strong id="summary-reserved">0</strong><span>Unidades reservadas</span></div>
           </article>
           <article class="summary-card">
             <span class="summary-card__icon summary-card__icon--yellow" aria-hidden="true">☆</span>
@@ -140,7 +140,7 @@
           </div>
           <div class="field">
             <label for="gift-quantity">Quantidade desejada</label>
-            <input id="gift-quantity" name="desiredQuantity" type="number" min="1" value="1" inputmode="numeric" required>
+            <input id="gift-quantity" name="desiredQuantity" type="number" min="1" max="9999" value="1" inputmode="numeric" required>
             <label class="limit-toggle" for="gift-unlimited">
               <input id="gift-unlimited" name="unlimited" type="checkbox" value="true">
               <span>Sem limite de unidades</span>

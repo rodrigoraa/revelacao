@@ -32,8 +32,8 @@ const elements = {
 
 async function api(url, options = {}) {
   const response = await fetch(url, {
-    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
     ...options,
+    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
   });
   const data = await response.json().catch(() => ({}));
   if (response.status === 401 && url !== "/api/espaco-da-mae/login") showLogin();
@@ -80,7 +80,7 @@ function formatDate(date) {
 }
 
 function renderSummary() {
-  const gifts = state.dashboard.gifts;
+  const gifts = state.dashboard?.gifts || [];
   const reserved = gifts.reduce((total, gift) => total + gift.reservedQuantity, 0);
   const available = gifts.reduce(
     (total, gift) => total + (Number.isInteger(gift.availableQuantity) ? gift.availableQuantity : 0),
@@ -106,10 +106,14 @@ function renderSettings() {
 function reservationElement(reservation) {
   const row = createElement("div", `reservation${reservation.status === "cancelled" ? " reservation--cancelled" : ""}`);
   const person = createElement("div", "reservation__person");
+  const dateLabel = reservation.status === "cancelled" ? "Cancelada" : "Reservada";
+  const dateValue = reservation.status === "cancelled"
+    ? reservation.cancelledAt || reservation.createdAt
+    : reservation.createdAt;
   person.append(
     createElement("strong", "", reservation.guestName),
     createElement("span", "", reservation.phone || "Telefone não informado"),
-    createElement("span", "reservation__date", `${reservation.status === "cancelled" ? "Cancelada" : "Reservada"} em ${formatDate(reservation.createdAt)}`)
+    createElement("span", "reservation__date", `${dateLabel} em ${formatDate(dateValue)}`)
   );
 
   const details = createElement("div", "reservation__details");
@@ -192,6 +196,13 @@ function giftElement(gift) {
 }
 
 function renderGifts() {
+  if (!state.dashboard) {
+    elements.giftList.replaceChildren(
+      createElement("p", "reservation-empty", "Não foi possível carregar os presentes. Recarregue a página para tentar novamente.")
+    );
+    return;
+  }
+
   const query = state.search.trim().toLocaleLowerCase("pt-BR");
   const gifts = state.dashboard.gifts.filter((gift) => {
     const searchable = `${gift.name} ${gift.category || ""}`.toLocaleLowerCase("pt-BR");
