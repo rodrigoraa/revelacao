@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-labelledby="title">
+  <title id="title">Toalha infantil com capuz</title>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#eef7f2"/><stop offset="1" stop-color="#fff5ed"/></linearGradient>
+    <filter id="s"><feDropShadow dy="15" stdDeviation="13" flood-color="#566f61" flood-opacity=".14"/></filter>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <g filter="url(#s)">
+    <path d="M220 105h360v290H220Z" fill="#afd0bd"/>
+    <path d="M220 105h360L400 285Z" fill="#d9eadf"/>
+    <path d="M333 172c16-45 38-67 67-67s51 22 67 67c-23 26-45 39-67 39s-44-13-67-39Z" fill="#f7fbf8"/>
+    <circle cx="375" cy="156" r="6" fill="#536d5f"/>
+    <circle cx="425" cy="156" r="6" fill="#536d5f"/>
+    <path d="M388 176c8 8 16 8 24 0" fill="none" stroke="#d48a96" stroke-width="6" stroke-linecap="round"/>
+    <path d="M220 350h360v45H220Z" fill="#8fb7a0"/>
+  </g>
+  <path d="M125 170c28-24 55-24 83 0" fill="none" stroke="#efb1bb" stroke-width="9" stroke-linecap="round"/>
+</svg>

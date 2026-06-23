@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#fff8f6">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Espaço da mãe | Chá Lista</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/espaco-da-mae.css">
+    <script src="/js/espaco-da-mae.js" defer></script>
+  </head>
+  <body class="mother-space-body">
+    <a class="skip-link" href="#mother-space-content">Ir para o conteúdo</a>
+
+    <main class="login-layout" id="login-view">
+      <section class="login-card" aria-labelledby="login-title">
+        <a class="back-link" href="/">← Voltar para a lista</a>
+        <div class="login-card__mark" aria-hidden="true">♡</div>
+        <p class="eyebrow eyebrow--small">Área reservada</p>
+        <h1 id="login-title">Espaço da mãe</h1>
+        <p>Entre com a senha definida no servidor para cuidar dos presentes e das reservas.</p>
+        <form id="login-form">
+          <div class="field">
+            <label for="mother-space-password">Senha</label>
+            <input id="mother-space-password" name="password" type="password" autocomplete="current-password" required autofocus>
+          </div>
+          <p class="form-error hidden" id="login-error" role="alert"></p>
+          <button class="button button--primary button--full" type="submit" id="login-submit">Entrar</button>
+        </form>
+      </section>
+    </main>
+
+    <div class="mother-space-shell hidden" id="mother-space-view">
+      <header class="mother-space-header">
+        <div class="container mother-space-header__content">
+          <a class="mother-space-brand" href="/">
+            <span aria-hidden="true">♡</span>
+            <span>Chá Lista</span>
+          </a>
+          <div class="mother-space-header__actions">
+            <a class="button button--ghost button--small" href="/" target="_blank" rel="noopener">Ver site</a>
+            <button class="button button--ghost button--small" type="button" id="logout-button">Sair</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="mother-space-main container" id="mother-space-content">
+        <div class="mother-space-title">
+          <div>
+            <p class="eyebrow eyebrow--small">Espaço da mãe</p>
+            <h1>Olá, mamãe!</h1>
+            <p>Gerencie a lista e acompanhe as reservas em um só lugar.</p>
+          </div>
+          <button class="button button--primary" type="button" id="add-gift-button">+ Adicionar presente</button>
+        </div>
+
+        <section class="summary-grid" aria-label="Resumo da lista">
+          <article class="summary-card">
+            <span class="summary-card__icon summary-card__icon--pink" aria-hidden="true">🎁</span>
+            <div><strong id="summary-gifts">0</strong><span>Presentes</span></div>
+          </article>
+          <article class="summary-card">
+            <span class="summary-card__icon summary-card__icon--green" aria-hidden="true">✓</span>
+            <div><strong id="summary-reserved">0</strong><span>Unidades reservadas</span></div>
+          </article>
+          <article class="summary-card">
+            <span class="summary-card__icon summary-card__icon--yellow" aria-hidden="true">☆</span>
+            <div><strong id="summary-available">0</strong><span>Unidades disponíveis</span></div>
+          </article>
+        </section>
+
+        <div class="mother-space-layout">
+          <section class="mother-space-panel settings-panel" aria-labelledby="settings-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow eyebrow--small">Personalização</p>
+                <h2 id="settings-title">Informações do evento</h2>
+              </div>
+            </div>
+            <form id="settings-form">
+              <div class="field">
+                <label for="settings-title-input">Título do chá</label>
+                <input id="settings-title-input" name="eventTitle" type="text" maxlength="100" required>
+              </div>
+              <div class="field">
+                <label for="settings-family">Nome do bebê ou família</label>
+                <input id="settings-family" name="familyName" type="text" maxlength="160" required>
+              </div>
+              <div class="field">
+                <label for="settings-message">Mensagem de boas-vindas</label>
+                <textarea id="settings-message" name="welcomeMessage" rows="4" maxlength="600" required></textarea>
+              </div>
+              <button class="button button--secondary" type="submit" id="settings-submit">Salvar informações</button>
+            </form>
+          </section>
+
+          <section class="mother-space-panel gifts-panel" aria-labelledby="mother-space-gifts-title">
+            <div class="panel-heading panel-heading--gifts">
+              <div>
+                <p class="eyebrow eyebrow--small">Sua lista</p>
+                <h2 id="mother-space-gifts-title">Presentes e reservas</h2>
+              </div>
+              <label class="search-field">
+                <span class="sr-only">Buscar presente</span>
+                <input id="gift-search" type="search" placeholder="Buscar presente...">
+              </label>
+            </div>
+            <div class="mother-space-gift-list" id="mother-space-gift-list" aria-live="polite"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <dialog class="modal gift-modal" id="gift-dialog" aria-labelledby="gift-dialog-title">
+      <form class="modal__content" id="gift-form">
+        <button class="modal__close" type="button" data-close-gift-modal aria-label="Fechar">×</button>
+        <p class="eyebrow eyebrow--small">Lista de presentes</p>
+        <h2 id="gift-dialog-title">Adicionar presente</h2>
+        <input id="edit-gift-id" type="hidden">
+
+        <div class="field">
+          <label for="gift-name">Nome do presente</label>
+          <input id="gift-name" name="name" type="text" maxlength="160" required>
+          <small>Ao digitar pelo menos 3 letras, buscaremos imagens relacionadas.</small>
+        </div>
+        <div class="image-suggestions" id="image-suggestions">
+          <div class="image-suggestions__heading">
+            <strong>Sugestões de imagem</strong>
+            <button class="image-search-button" id="image-search-button" type="button">Buscar novamente</button>
+          </div>
+          <p class="image-search-status" id="image-search-status">Digite o nome do presente para ver sugestões.</p>
+          <div class="image-suggestions__grid hidden" id="image-suggestions-grid" aria-live="polite"></div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="gift-category">Categoria <span class="optional">(opcional)</span></label>
+            <input id="gift-category" name="category" type="text" maxlength="80" placeholder="Ex.: Roupinhas">
+          </div>
+          <div class="field">
+            <label for="gift-quantity">Quantidade desejada</label>
+            <input id="gift-quantity" name="desiredQuantity" type="number" min="1" value="1" inputmode="numeric" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="gift-description">Descrição <span class="optional">(opcional)</span></label>
+          <textarea id="gift-description" name="description" rows="3" maxlength="600"></textarea>
+        </div>
+        <div class="field">
+          <label for="gift-image">Imagem escolhida ou URL manual <span class="optional">(opcional)</span></label>
+          <input id="gift-image" name="imageUrl" type="text" maxlength="500" placeholder="https://... ou /images/presente.svg">
+          <input id="gift-image-attribution" name="imageAttribution" type="hidden">
+          <input id="gift-image-source" name="imageSourceUrl" type="hidden">
+          <small>Selecione uma sugestão acima ou cole uma URL HTTPS.</small>
+        </div>
+        <p class="form-error hidden" id="gift-error" role="alert"></p>
+        <button class="button button--primary button--full" type="submit" id="gift-submit">Salvar presente</button>
+      </form>
+    </dialog>
+
+    <div class="toast" id="mother-space-toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

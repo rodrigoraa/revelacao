@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-labelledby="title">
+  <title id="title">Kit de higiene para bebê</title>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#eff7f3"/><stop offset="1" stop-color="#fff4ed"/></linearGradient>
+    <filter id="s"><feDropShadow dy="14" stdDeviation="12" flood-color="#566f61" flood-opacity=".14"/></filter>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <g filter="url(#s)">
+    <rect x="195" y="350" width="410" height="40" rx="16" fill="#c49a67"/>
+    <rect x="230" y="190" width="115" height="165" rx="24" fill="#fff" stroke="#91b49f" stroke-width="9"/>
+    <rect x="455" y="190" width="115" height="165" rx="24" fill="#fff" stroke="#91b49f" stroke-width="9"/>
+    <path d="M260 190v-40h55v40" fill="#f4c0c8" stroke="#91b49f" stroke-width="9"/>
+    <path d="M485 190v-40h55v40" fill="#f4c0c8" stroke="#91b49f" stroke-width="9"/>
+    <path d="M365 150h70v205h-70Z" fill="#fff" stroke="#91b49f" stroke-width="9"/>
+    <path d="M380 150v-45h40v45" fill="#f4c0c8" stroke="#91b49f" stroke-width="9"/>
+    <circle cx="288" cy="270" r="25" fill="#fff1d5"/>
+    <circle cx="512" cy="270" r="25" fill="#fff1d5"/>
+    <path d="M389 255h22" stroke="#f0a6b2" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <path d="M120 135c24-21 47-21 71 0" fill="none" stroke="#efb1bb" stroke-width="8" stroke-linecap="round"/>
+</svg>

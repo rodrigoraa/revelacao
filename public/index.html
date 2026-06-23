@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#fff8f6">
+    <meta name="description" content="Lista de presentes do nosso chá de bebê.">
+    <title>Chá de bebê</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#lista-presentes">Ir para a lista de presentes</a>
+
+    <header class="hero">
+      <div class="hero__shape hero__shape--one" aria-hidden="true"></div>
+      <div class="hero__shape hero__shape--two" aria-hidden="true"></div>
+      <div class="container hero__content">
+        <div class="eyebrow"><span aria-hidden="true">♡</span> Uma doce espera</div>
+        <h1 id="event-title">Chá de bebê</h1>
+        <p class="hero__family" id="family-name">Um bebê muito amado está chegando!</p>
+        <p class="hero__message" id="welcome-message">
+          Escolha um presente com carinho. Sua presença já torna este momento ainda mais especial.
+        </p>
+        <a class="button button--primary hero__button" href="#lista-presentes">Ver presentes</a>
+      </div>
+      <div class="hero__wave" aria-hidden="true"></div>
+    </header>
+
+    <main id="lista-presentes" class="gifts-section">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow eyebrow--small">Feito com carinho</span>
+            <h2>Lista de presentes</h2>
+          </div>
+          <p>Escolha o que deseja presentear. Itens já escolhidos continuam visíveis para evitar presentes repetidos.</p>
+        </div>
+
+        <nav class="category-filter" id="category-filter" aria-label="Filtrar presentes por categoria"></nav>
+
+        <div class="gift-grid" id="gift-grid" aria-live="polite">
+          <div class="skeleton-card" aria-hidden="true"></div>
+          <div class="skeleton-card" aria-hidden="true"></div>
+          <div class="skeleton-card" aria-hidden="true"></div>
+        </div>
+
+        <div class="empty-state hidden" id="empty-state">
+          <span class="empty-state__icon" aria-hidden="true">🎁</span>
+          <h3>Nenhum presente por aqui</h3>
+          <p>Em breve a lista receberá novos itens.</p>
+        </div>
+      </div>
+    </main>
+
+    <section class="how-it-works" aria-labelledby="how-title">
+      <div class="container">
+        <div class="section-heading section-heading--center">
+          <span class="eyebrow eyebrow--small">É bem simples</span>
+          <h2 id="how-title">Como funciona?</h2>
+        </div>
+        <div class="steps">
+          <article class="step">
+            <span class="step__number">1</span>
+            <h3>Escolha</h3>
+            <p>Encontre um presente disponível na lista.</p>
+          </article>
+          <article class="step">
+            <span class="step__number">2</span>
+            <h3>Reserve</h3>
+            <p>Informe seu nome e a quantidade desejada.</p>
+          </article>
+          <article class="step">
+            <span class="step__number">3</span>
+            <h3>Presenteie</h3>
+            <p>Prontinho! Agora é só levar o presente no grande dia.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container">
+        <p>Feito com amor para celebrar uma nova vida <span aria-hidden="true">♡</span></p>
+        <a href="/espaco-da-mae">Espaço da mãe</a>
+      </div>
+    </footer>
+
+    <dialog class="modal" id="reservation-dialog" aria-labelledby="reservation-title">
+      <form class="modal__content" id="reservation-form">
+        <button class="modal__close" type="button" data-close-modal aria-label="Fechar">×</button>
+        <span class="modal__icon" aria-hidden="true">♡</span>
+        <p class="eyebrow eyebrow--small">Sua escolha</p>
+        <h2 id="reservation-title">Vou presentear</h2>
+        <p class="modal__gift-name" id="selected-gift-name"></p>
+
+        <input type="hidden" id="gift-id" name="giftId">
+        <div class="field">
+          <label for="guest-name">Seu nome <span aria-hidden="true">*</span></label>
+          <input id="guest-name" name="guestName" type="text" maxlength="120" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="guest-phone">Telefone ou WhatsApp <span class="optional">(opcional)</span></label>
+          <input id="guest-phone" name="phone" type="tel" maxlength="40" autocomplete="tel" inputmode="tel" placeholder="(00) 00000-0000">
+        </div>
+        <div class="field">
+          <label for="reservation-quantity">Quantidade <span aria-hidden="true">*</span></label>
+          <div class="quantity-control">
+            <button type="button" id="quantity-minus" aria-label="Diminuir quantidade">−</button>
+            <input id="reservation-quantity" name="quantity" type="number" min="1" value="1" inputmode="numeric" required>
+            <button type="button" id="quantity-plus" aria-label="Aumentar quantidade">+</button>
+          </div>
+          <small id="quantity-help"></small>
+        </div>
+
+        <p class="form-error hidden" id="reservation-error" role="alert"></p>
+        <button class="button button--primary button--full" type="submit" id="reservation-submit">
+          Confirmar reserva
+        </button>
+        <p class="privacy-note">Seu nome e telefone ficam visíveis apenas para os organizadores.</p>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

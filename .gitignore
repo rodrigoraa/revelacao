@@ -1,0 +1,41 @@
+# Dependências
+node_modules/
+
+# Variáveis de ambiente e segredos
+.env
+.env.*
+!.env.example
+
+# Bancos e arquivos persistentes locais
+data/
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+
+# Logs e relatórios
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+coverage/
+
+# Arquivos temporários
+tmp/
+temp/
+*.tmp
+*.swp
+
+# Editores e sistema operacional
+.vscode/
+.idea/
+.vs/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Artefatos de build
+dist/
+build/

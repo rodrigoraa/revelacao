@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-labelledby="title">
+  <title id="title">Body infantil de algodão</title>
+  <defs>
+    <linearGradient id="bg"><stop stop-color="#fff3ef"/><stop offset="1" stop-color="#f4f8f5"/></linearGradient>
+    <filter id="s"><feDropShadow dy="14" stdDeviation="13" flood-color="#76555d" flood-opacity=".14"/></filter>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <g filter="url(#s)">
+    <path d="M318 95c24 23 52 35 82 35s58-12 82-35l91 64-55 80-43-28v111l-50 85h-50l-50-85V211l-43 28-55-80Z" fill="#f4b5bf"/>
+    <path d="M352 105c7 34 23 51 48 51s41-17 48-51c-17 10-33 15-48 15s-31-5-48-15Z" fill="#fff8f3"/>
+    <path d="M325 275h150v47l-50 85h-50l-50-85Z" fill="#f8cbd2"/>
+    <circle cx="400" cy="235" r="28" fill="#fff1d5"/>
+    <path d="M387 237c10 14 18 14 27 0" fill="none" stroke="#c67d88" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <circle cx="150" cy="120" r="45" fill="#fff" opacity=".62"/>
+  <circle cx="655" cy="380" r="62" fill="#fff" opacity=".5"/>
+</svg>

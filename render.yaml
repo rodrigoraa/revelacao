@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: cha-lista
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: 22.19.0
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_SSL
+        value: "true"
+      - key: DATABASE_POOL_SIZE
+        value: "5"
+      - key: DATABASE_URL
+        sync: false
+      - key: ESPACO_MAE_PASSWORD
+        sync: false
+      - key: ESPACO_MAE_SESSION_SECRET
+        generateValue: true

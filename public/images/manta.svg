@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-labelledby="title">
+  <title id="title">Manta macia para bebê</title>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#fff2f3"/><stop offset="1" stop-color="#f0f7f3"/></linearGradient>
+    <filter id="s"><feDropShadow dy="15" stdDeviation="13" flood-color="#76555d" flood-opacity=".14"/></filter>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <g filter="url(#s)">
+    <path d="M235 120h330v240c-50 42-104 49-163 20-57 30-113 23-167-20Z" fill="#e9b8c0"/>
+    <path d="M265 150h270v185c-39 25-84 28-133 5-47 24-93 22-137-5Z" fill="#f9d6dc"/>
+    <path d="M235 120h330v52H235Z" fill="#c78d98"/>
+    <g fill="#fff4d9">
+      <circle cx="325" cy="245" r="10"/><circle cx="400" cy="210" r="10"/><circle cx="475" cy="265" r="10"/>
+      <path d="M350 300l15 25h-30Z"/><path d="M450 175l15 25h-30Z"/>
+    </g>
+    <path d="M235 350v45m35-32v45m260-45v45m35-58v45" stroke="#c78d98" stroke-width="12" stroke-linecap="round"/>
+  </g>
+  <circle cx="650" cy="105" r="50" fill="#fff" opacity=".55"/>
+</svg>
