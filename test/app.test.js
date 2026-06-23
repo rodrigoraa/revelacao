@@ -74,7 +74,15 @@ test("fluxo público e Espaço da mãe preserva privacidade e impede excesso de 
     body: JSON.stringify({ password: "senha-de-teste" }),
   });
   assert.equal(login.response.status, 200);
-  const cookie = login.response.headers.get("set-cookie").split(";")[0];
+  const sessionCookie = login.response.headers.get("set-cookie");
+  assert.match(sessionCookie, /Max-Age=28800/);
+  const cookie = sessionCookie.split(";")[0];
+
+  const persistedSession = await request(baseUrl, "/api/espaco-da-mae/session", {
+    headers: { Cookie: cookie },
+  });
+  assert.equal(persistedSession.response.status, 200);
+  assert.equal(persistedSession.data.authenticated, true);
 
   const dashboard = await request(baseUrl, "/api/espaco-da-mae/dashboard", {
     headers: { Cookie: cookie },

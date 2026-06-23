@@ -191,11 +191,20 @@ function renderGifts() {
 
 async function loadDashboard() {
   elements.giftList.innerHTML = '<p class="mother-space-loading">Carregando presentes...</p>';
-  const dashboard = await api("/api/espaco-da-mae/dashboard");
-  state.dashboard = dashboard;
-  renderSummary();
-  renderSettings();
-  renderGifts();
+  try {
+    const dashboard = await api("/api/espaco-da-mae/dashboard");
+    state.dashboard = dashboard;
+    renderSummary();
+    renderSettings();
+    renderGifts();
+  } catch (error) {
+    if (!elements.motherSpaceView.classList.contains("hidden")) {
+      elements.giftList.replaceChildren(
+        createElement("p", "reservation-empty", "Não foi possível carregar os presentes. Recarregue a página para tentar novamente.")
+      );
+    }
+    throw error;
+  }
 }
 
 function openGiftDialog(gift = null) {
@@ -309,7 +318,11 @@ elements.loginForm.addEventListener("submit", async (event) => {
       body: JSON.stringify({ password: document.querySelector("#mother-space-password").value }),
     });
     showMotherSpace();
-    await loadDashboard();
+    try {
+      await loadDashboard();
+    } catch (error) {
+      showToast(error.message, "error");
+    }
   } catch (error) {
     elements.loginError.textContent = error.message;
     elements.loginError.classList.remove("hidden");
@@ -401,9 +414,15 @@ document.querySelector("#logout-button").addEventListener("click", async () => {
     const session = await api("/api/espaco-da-mae/session");
     if (!session.authenticated) return showLogin();
     showMotherSpace();
-    await loadDashboard();
   } catch (error) {
     showLogin();
+    showToast(error.message, "error");
+    return;
+  }
+
+  try {
+    await loadDashboard();
+  } catch (error) {
     showToast(error.message, "error");
   }
 })();
